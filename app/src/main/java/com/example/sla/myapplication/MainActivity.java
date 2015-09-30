@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -23,6 +24,7 @@ import android.bluetooth.BluetoothSocket;
 public class MainActivity extends Activity {
 
     Button btnLedOn, btnLedOff;
+    EditText editText;
 
     private BluetoothAdapter btAdapter = null;
     private BluetoothSocket btSocket = null;
@@ -43,6 +45,7 @@ public class MainActivity extends Activity {
 
         btnLedOn = (Button) findViewById(R.id.btnLedOn);
         btnLedOff = (Button) findViewById(R.id.btnLedOff);
+        editText = (EditText) findViewById(R.id.editText);
         btnLedOn.setEnabled(false);
         btnLedOff.setEnabled(false);
 
@@ -71,6 +74,10 @@ public class MainActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    public void btnSend(View v) {
+        sendData(String.valueOf(editText.getText()));
     }
 
     public void btnLedOn(View v) {

@@ -27,4 +27,23 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:onClick="btnLedOff" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText"
+        android:layout_below="@+id/btnLedOn"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="45dp"
+        android:layout_alignEnd="@+id/btnLedOff" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send to LCD"
+        android:id="@+id/btnSend"
+        android:layout_alignParentBottom="true"
+        android:layout_alignEnd="@+id/btnLedOff"
+        android:onClick="btnSend" />
+
 </RelativeLayout>
