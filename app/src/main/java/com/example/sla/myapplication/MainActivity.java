@@ -7,10 +7,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Set;
 import java.util.UUID;
 
@@ -25,11 +28,13 @@ public class MainActivity extends Activity {
 
     Button btnLedOn, btnLedOff;
     EditText editText;
+    TextView getText;
 
     private BluetoothAdapter btAdapter = null;
     private BluetoothSocket btSocket = null;
 
     private OutputStream outStream = null;
+    private InputStream inStream = null;
 
     private static String address = "20:15:05:29:70:74";
 
@@ -46,6 +51,7 @@ public class MainActivity extends Activity {
         btnLedOn = (Button) findViewById(R.id.btnLedOn);
         btnLedOff = (Button) findViewById(R.id.btnLedOff);
         editText = (EditText) findViewById(R.id.editText);
+        getText = (TextView) findViewById(R.id.txtOut);
         btnLedOn.setEnabled(false);
         btnLedOff.setEnabled(false);
 
@@ -116,7 +122,7 @@ public class MainActivity extends Activity {
     }
 
     public void connectToDevice(String adr) {
-        super.onResume();
+        //super.onResume();
 
         //enable buttons once connection established.
         btnLedOn.setEnabled(true);
@@ -133,7 +139,7 @@ public class MainActivity extends Activity {
         try {
             btSocket = device.createRfcommSocketToServiceRecord(MY_UUID);
         } catch (IOException e) {
-            errorExit("Fatal Error", "In onResume() and socket create failed: " + e.getMessage() + ".");
+            errorExit("Fatal Error", "socket create failed: " + e.getMessage() + ".");
         }
 
         // Discovery is resource intensive.  Make sure it isn't going on
@@ -147,25 +153,50 @@ public class MainActivity extends Activity {
             try {
                 btSocket.close();
             } catch (IOException e2) {
-                errorExit("Fatal Error", "In onResume() and unable to close socket during connection failure" + e2.getMessage() + ".");
+                errorExit("Fatal Error", "unable to close socket during connection failure" + e2.getMessage() + ".");
             }
         }
 
         // Create a data stream so we can talk to server.
         try {
             outStream = btSocket.getOutputStream();
+            inStream = btSocket.getInputStream();
         } catch (IOException e) {
-            errorExit("Fatal Error", "In onResume() and output stream creation failed:" + e.getMessage() + ".");
+            errorExit("Fatal Error", "output stream creation failed:" + e.getMessage() + ".");
         }
+    }
+
+    public void btnGetDataClick(View v){
+        sendData("x");
+        getData();
+    }
+
+    private void getData() {
+        byte[] inBuffer = "01234567890123456789".getBytes();
+        String str1 = null;
+        try {
+            if (inStream.available() > 0) inStream.read(inBuffer, 0, 20);
+        } catch (IOException e) {
+            String msg = "exception occurred during write: " + e.getMessage();
+            errorExit("Fatal Error", msg);
+        }
+        try {
+            str1 = new String(inBuffer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        getText.setText(str1);
     }
 
 
     private void sendData(String message) {
         byte[] msgBuffer = message.getBytes();
+
+
         try {
             outStream.write(msgBuffer);
         } catch (IOException e) {
-            String msg = "In onResume() and an exception occurred during write: " + e.getMessage();
+            String msg = "exception occurred during write: " + e.getMessage();
             errorExit("Fatal Error", msg);
         }
     }
